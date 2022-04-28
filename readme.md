@@ -173,10 +173,27 @@ API avaimen ja osoitteen. Lisäksi laitoin yhdeksi muuttujaksi REACT_APP_BACKEND
 oli Openshiftissä pyörivän palvelimen osoite.
 
 Käyttöliittymästä oli tarkoitus tehdä mahdollisimman yksinkertainen (ajan säästämisen vuoksi). Ainoat mitkä olivat tärkeitä, olivat
-kirjautumissivu sekä rekisteröintisivu. 
+kirjautumissivu sekä rekisteröintisivu. Lopulta tein Dockerfilen ja loin tästä paikallisen imagen:
 
+```
+FROM node:17-alpine
 
+WORKDIR /app
 
+COPY package.json .
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npm", "start"]
+```
+
+| ![kuva7.jpg](https://github.com/niikari/ohjelmistotekniikoiden-seminaari/blob/main/photos/docker_react_v1.JPG?raw=true) |
+|:--:|
+| *Kontissa pyörivä React sovellus ja testattu selaimella* |
 
 
 
