@@ -34,5 +34,28 @@ Lopullinen palvelimen koodi löydettävissä [täältä](https://github.com/niik
 
 Palvelimelle luotu mahdollista tulevaa kehittämistä varten useampi luokka sekä repositoriot näille. Ajan säästämisen vuoksi, en käyttänyt aikaani RestControllerien 
 luomiseen vaan käytin Springin tarjoamaa Rest Data Api -palvelua hyväksi, jonka avulla sain automaattisesti luotua rajapinanat mm. käyttäjien lisäämiseksi
-tietokantaan. Firebasen autentikoinnin mukaan ottamiseksi löysin Googlen avulla hyvän sivun avukseni: [Authentication with Firebase Auth and Spring security](https://medium.com/comsystoreply/authentication-with-firebase-auth-and-spring-security-fcb2c1dc96d)
+tietokantaan. Firebasen autentikoinnin mukaan ottamiseksi löysin Googlen avulla hyvän sivun avukseni: [Authentication with Firebase Auth and Spring security](https://medium.com/comsystoreply/authentication-with-firebase-auth-and-spring-security-fcb2c1dc96d).
 
+Palvelimen koodauksen aloituksen yhteydessä loin heti paikallisen git repositorion sekä Githubiin tälle yhteyden. Koodatessa aina seuraavaa ominaisuutta, tein
+ensin tästä oman haaransa, ja mikäli haaran kanssa tuli ongelmia - palasin aina edelliseen toimivaan versioon. Tätä jatkoin, kunnes omasta mielestäni koodi
+oli tarpeeksi toimiva tehdäkseni siitä Docker imagen. 
+
+## Palvelimen koodi Docker imageksi
+
+Aloitin kontin tekemisen jar-tiedoston luomisella. Käytin koodaamiseen Eclipsen EE editionia ja täältä painamalla hiiren oikeaa näppäintä projektin päällä
+löysin run -valikosta maven build... -kohdan. Antamalla täällä "goaliksi" *package* ja painamalla run - aloitti jar-tiedoston luomisen testaamalla toiminnan
+ja tämän jälkeen luomalla jar-tiedoston (/target/backend_openshift-0.0.1-SNAPSHOT.jar) projektin kansioon. 
+
+Tämän jälkeen loin Dockerfile -tiedoston ja sisällöksi asetin:
+
+```
+FROM openjdk:latest
+
+EXPOSE 8080
+
+WORKDIR /app
+
+COPY /target/backend_openshift-0.0.1-SNAPSHOT.jar .
+
+CMD ["java", "-jar", "backend_openshift-0.0.1-SNAPSHOT.jar"]
+```
