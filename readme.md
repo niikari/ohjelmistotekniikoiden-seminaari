@@ -2,9 +2,15 @@
 
 ## Kuvaus projektista
 
-Tavoitteena minulla oli tehdä projekti, jossa koodia voisi jatkuvasti kehittää, versioida sekä julkaista helposti ja nopeasti.
-Julkaisupaikaksi valitsin tunnilla käsitellyn Openshiftin (Otaverkko). Lisäksi päätin, että käyttäjien rekisteröiminen ja 
-tunnistaminen tapahtuu jonkin ulkopuolisen toimijan avulla - tähän valitsin juuri käyttämäni Google Firebasen.
+Itseäni alkoi kiinnostamaan Openshift ja koodin kehittäminen Lenni Laukkasen luennon jälkeen. Kokeilin DevOps tehtävässä 
+tehdä palvelimen Javalla (Spring), MySql serverin (Openshift) sekä käyttöliittymän (React). Laitoin koodit Githubiin
+ja sen jälkeen Openshiftissä ilmoitin, että buildaa kontit sieltä. Tällä tavalla kaikki toimi, mutta en itse siis tehnyt
+kontin koodia, enkä saanut sitä automaattisesti komentokehotteesta debloyattua.
+
+Tällä kertaa ajatus oli aika samanlainen, mutta toisin kuin tehtävässä, halusin nyt tehdä itse kontit sekä linkittää
+imaget suoraan Openshiftin repositorioon. Tällä tavalla, aina kun kontin buildaan ja pusken -> debloyaa automaattisesti
+uuden sovelluksen käyttöön. Sovelluksessani piti myös olla käyttäjien hallinta ulkoisen tahon puolelta. Tähän valitsin 
+Googlen Firebasen, jossa käyttäjä luotaisiin ja varmennettaisiin aina kirjautumisen / rekisteröinnin yhteydessä. 
 
 ## Aloittaminen
 
@@ -30,7 +36,7 @@ Kuvassa näkyvissä testausta varten luotu käyttäjä (sittemmin poistettu).
 ## Palvelin
 
 Palvelimen pohjaksi valitsin Java Spring Bootin (Maven). Aloitin luomalla itselleni uuden projektin [Spring initializerilla](https://start.spring.io/).
-Lopullinen palvelimen koodi löydettävissä [täältä](https://github.com/niikari/tori_backend).
+Lopullinen palvelimen koodi löydettävissä [täältä](https://github.com/niikari/tori_backend) (dev -branch).
 
 Palvelimelle luotu mahdollista tulevaa kehittämistä varten useampi luokka sekä repositoriot näille. Ajan säästämisen vuoksi, en käyttänyt aikaani RestControllerien 
 luomiseen vaan käytin Springin tarjoamaa Rest Data Api -palvelua hyväksi, jonka avulla sain automaattisesti luotua rajapinanat mm. käyttäjien lisäämiseksi
@@ -71,7 +77,11 @@ Sitten edessä olikin imagen rakentaminen, tämän toteutin komennolla (samasta 
 Palvelin lähti käyntiin ilman virheviestejä ja yhteyden ottaminen osoitteessa http://localhost:8080/api toimi oikein. Sammutin palvelimen
 painamalla CTRL + C
 
-## Openshift, projektin luominen ja palvelin imagen yhdistäminen Openshiftin image registryyn
+| ![kuva4.jpg](https://github.com/niikari/ohjelmistotekniikoiden-seminaari/blob/main/photos/docker_javabackend_v1.JPG?raw=true) |
+|:--:|
+| *Kontissa pyörivä palvelin ja testattu yhteyttä selaimella* |
+
+## Openshift ja Docker imagen yhdistäminen kehityputkeksi
 
 Otaverkon tarjoamaan Openshiftiin kirjauduttuani loin uuden projektin: niilesseminaari.
 
@@ -90,11 +100,68 @@ push -komennon jälkeen ladataan ja tämän jälkeen latasin imagen Otaverkon re
 Tästä siirryin takaisin Openshiftin projektiin ja sieltä kohtaan +Add. Painoin valikosta löytyvää *Container images* -kohtaa ja siirryin 
 etsimään juuri lisäämääni imagea osaksi projektiani.
 
-| ![kuva4.jpg](https://github.com/niikari/ohjelmistotekniikoiden-seminaari/blob/main/photos/openshift_backend_image_add.JPG?raw=true) |
+| ![kuva5.jpg](https://github.com/niikari/ohjelmistotekniikoiden-seminaari/blob/main/photos/openshift_backend_image_add.JPG?raw=true) |
 |:--:|
 | *Image löytyi onnistuneesti, portti asetettu 8080 ja create* | 
 
-((tähän kuva onnistuneesta))
+Tämän jälkeen tarkistin, että kontti pyörii oikein ja, että siihen saa yhteyttä (tässä vaiheessa autentikointia ei tarvita, sallii
+kaikki pyynnöt).
+
+| ![kuva6.jpg](https://github.com/niikari/ohjelmistotekniikoiden-seminaari/blob/main/photos/openshift_backend_running_v.JPG?raw=true) |
+|:--:|
+| *Backend sovellus onnistuneesti julkaistu* |
+
+Tämän jälkeen aloin miettimään onko konttini koodi nyt tarpeeksi hyvä, vai voisiko julkaisua vieläkin helpottaa. Teemun vinkillä päädyin
+tekemään jar-tiedoston luomisen imagen luonnin yhteydessä. Tällä tavalla ei jatkossa enää tarvetta suorittaa maven buildia eclipsessa
+jokaisen muutoksen jälkeen.
+
+Dockerfile sisällöksi tuli lopulta (muutaman epäonnistumisen jälkeen):
+
+```
+FROM maven:3.5-jdk-8-alpine as builder
+
+WORKDIR /app
+
+COPY . .
+
+RUN mvn clean package
+
+FROM openjdk:latest
+
+EXPOSE 8080
+
+WORKDIR /app
+
+COPY --from=builder /app/target/backend_openshift-0.0.1-SNAPSHOT.jar .
+
+CMD ["java", "-jar", "backend_openshift-0.0.1-SNAPSHOT.jar"]
+```
+
+Nyt samassa tiedostossa luodaan kaksi imagea. Ensimmäinen image buildaa sovelluksen ja luo jar-tiedoston, jonka seuraava image ottaa
+sitten ainoaksi tiedostokseen ja ajaa lopuksi tiedoston. Testasin lopuksi toiminnan - toimi.
+
+Lopuksi vielä suljin palvelimellla kaikki reitit. Mikäli tietoja palvelimelta halutaan, on annettava Firebasen kirjautumisen yhteydessä
+saatava token (idToken) jokaisen pyynnön headerissa.
+
+```
+@Configuration
+@EnableWebSecurity
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+	@Override
+    protected void configure(HttpSecurity http) throws Exception {
+		http.csrf().disable().cors().and().authorizeRequests()
+                .anyRequest()
+                .authenticated();
+
+        http.oauth2ResourceServer()
+                .jwt();
+    }
+```
+
+Pushasin muokatun imagen Openshiftiin -> kun kontti oli jo linkitetty, niin buildasi automaattisesti uuden sovelluksen käyttöön ilman 
+katkosta -> lopputulos tämän osalta saavutettu.
+
 
 
 
