@@ -162,6 +162,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 Pushasin muokatun imagen Openshiftiin -> kun kontti oli jo linkitetty, niin buildasi automaattisesti uuden sovelluksen käyttöön ilman 
 katkosta -> lopputulos tämän osalta saavutettu.
 
+## Käyttöliittymä React
+
+Aloitin uuden React sovelluksen ja latasin samalla käyttööni mui -komponenttikirjaston sekä Firebase -kirjaston.
+Luotuun projektiin lisäsin juurihakemistoon kaksi uutta tiedostoa: .env (ympäristömuuttujat) ja .dockerignore (mitkä tiedostot jätetään
+pois kun konttiin tiedostoja kopioidaan Dockerfilessa). 
+
+Ympäristömuuttujien pitää Reactissa alkaa aina "REACT_APP_MUUTTUJANIMI". Lisäsin tiedostoon aiemmin Firebasesta saamani tiedot, kuten
+API avaimen ja osoitteen. Lisäksi laitoin yhdeksi muuttujaksi REACT_APP_BACKEND_URL, myöhempää käyttöä varten. Alkuun tässä muuttujassa 
+oli Openshiftissä pyörivän palvelimen osoite.
+
+Käyttöliittymästä oli tarkoitus tehdä mahdollisimman yksinkertainen (ajan säästämisen vuoksi). Ainoat mitkä olivat tärkeitä, olivat
+kirjautumissivu sekä rekisteröintisivu. 
+
 
 
 
