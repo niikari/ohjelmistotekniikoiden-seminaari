@@ -59,3 +59,46 @@ COPY /target/backend_openshift-0.0.1-SNAPSHOT.jar .
 
 CMD ["java", "-jar", "backend_openshift-0.0.1-SNAPSHOT.jar"]
 ```
+
+Sitten edessä olikin imagen rakentaminen, tämän toteutin komennolla (samasta sijainnista Dockerfilen kanssa):
+
+	$ docker build . -t javabackend
+
+"Hetken" lataamisen jälkeen kokeilin palvelimen toimintaa komennolla:
+
+	$ docker run -it -p 8080:8080 javabackend
+
+Palvelin lähti käyntiin ilman virheviestejä ja yhteyden ottaminen osoitteessa http://localhost:8080/api toimi oikein. Sammutin palvelimen
+painamalla CTRL + C
+
+## Openshift, projektin luominen ja palvelin imagen yhdistäminen Openshiftin image registryyn
+
+Otaverkon tarjoamaan Openshiftiin kirjauduttuani loin uuden projektin: niilesseminaari.
+
+Tämän jälkeen palasin takaisin komentokehotteelle ja jatkoin kirjautumalla Otaverkon imageregistryyn ensin hakemalla autentikointi
+avaimen ja tämän jälkeen kirjoittamalla komennon:
+
+	$ docker login default-route-openshift-image-registry.apps.hhocp.otaverkko.fi
+
+Kirjauduttani onnistuneesti palveluun jatkoin aiemmin tehdyn imagen parissa. Lisäsin ensin imageen tagin, joka kertoo mihin tämä image
+push -komennon jälkeen ladataan ja tämän jälkeen latasin imagen Otaverkon registryyn:
+
+	$ docker tag javabackend default-route-openshift-image-registry.apps.hhocp.otaverkko.fi/niilesseminaari/backend:latest
+	
+	$ docker push default-route-openshift-image-registry.apps.hhocp.otaverkko.fi/niilesseminaari/backend
+
+Tästä siirryin takaisin Openshiftin projektiin ja sieltä kohtaan +Add. Painoin valikosta löytyvää *Container images* -kohtaa ja siirryin 
+etsimään juuri lisäämääni imagea osaksi projektiani.
+
+| ![kuva4.jpg](https://github.com/niikari/ohjelmistotekniikoiden-seminaari/blob/main/photos/openshift_backend_image_add.JPG?raw=true) |
+|:--:|
+| *Image löytyi onnistuneesti, portti asetettu 8080 ja create* | 
+
+((tähän kuva onnistuneesta))
+
+
+
+
+
+
+
