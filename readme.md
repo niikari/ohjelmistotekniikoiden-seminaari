@@ -13,7 +13,7 @@ sisäänkirjautumisen jälkeen aloitin luomalla uuden projektin palveluun. Proje
 palvelussa (Authentication), lisäsin autentikointitavaksi sähköpostiosoitteen ja projektinäkymästä (Project Overview) sain 
 tarvittavat tiedot ohjelmallista yhteydenottoa varten.
 
-| ![kuva1.jpg]() |
+| ![kuva1.jpg](https://github.com/niikari/ohjelmistotekniikoiden-seminaari/blob/main/photos/authentication_firebase.JPG?raw=true) |
 |:--:|
 | *Käyttäjätiedot* |
 
