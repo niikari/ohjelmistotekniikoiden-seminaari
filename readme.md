@@ -27,4 +27,7 @@ Kuvassa näkyvissä testausta varten luotu käyttäjä (sittemmin poistettu).
 |:--:|
 | *Tiedot palvelusta, kuten tarvittava API avain* |
 
+## Palvelin
+
+Palvelimen pohjaksi valitsin Java Spring Bootin (Maven). Aloitin luomalla itselleni uuden projektin [Spring initializer](https://start.spring.io/).
 
