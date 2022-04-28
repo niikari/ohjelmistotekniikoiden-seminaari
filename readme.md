@@ -17,4 +17,14 @@ tarvittavat tiedot ohjelmallista yhteydenottoa varten.
 |:--:|
 | *Käyttäjätiedot* |
 
+Kuvassa näkyvissä testausta varten luotu käyttäjä (sittemmin poistettu).
+
+| ![kuva2.jpg](https://github.com/niikari/ohjelmistotekniikoiden-seminaari/blob/main/photos/authentication_method.JPG?raw=true) |
+|:--:|
+| *Sähköposti/Salasana tunnistautuminen mahdollistettu* |
+
+|![kuva3.jpg](https://github.com/niikari/ohjelmistotekniikoiden-seminaari/blob/main/photos/authentication_web.JPG?raw=true) |
+|:--:|
+| *Tiedot palvelusta, kuten tarvittava API avain* |
+
 
