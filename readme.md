@@ -248,9 +248,41 @@ tämä ei toiminut -> käyttöliittymä ei löytänyt palvelinta. Päädyin lopu
 
 ## Lopputulos
 
+Lähdin testaamaan lopputulosta ja tässä vaiheessa kohtasin ongelman. Palvelimen kontin kellonaika on virheellinen, heittää
+useammalla tunnilla. Tarkalleen 3 tunnin heitto. Kun lähden rekisteröimään käyttäjää käyttöliittymän puolelta: annan 
+sähköpostiosoitteen, salasanan ja tämän jälkeen käyttöliittymä luo onnistuneesti käyttäjän Firebasen palveluun. Rekisteröinti
+palauttaa sovellukselle idtokenin, jonka lähetän palvelimelle (/api/users) headerissa yhdessä uuden käyttäjän sähköpostiosoitteen
+kanssa. Nyt tämä vaihe antoi virheen:
 
+```
+POST https://backend-niilesseminaari.apps.hhocp.otaverkko.fi/api/users net::ERR_CERT_AUTHORITY_INVALID
+```
 
- 
+Tarkistin virheviestin ja tämä voi ilmeisesti johtua kahdesta syystä: tuosta kellonajan virheestä tai sitten siitä, että 
+koska tämä palvelin toimii sertifikoimattomassa (itse sertifikoitu) url-osoitteessa. Päätin jättää ongelman ratkaisun kesken (aika).
+
+Teoriassa kaikki toimii niinkuin pitääkin:
+
+Käyttäjä voi rekisteröityä käyttäjäksi -> lisää käyttäjän Firebaseen luodun projektin käyttäjäksi -> lisää samalla käyttäjän
+sähköpostin mukaan palvelimen tietokantaan -> tallentaa käyttäjän tiedot (kuten idtokenin, refreshtokenin) sovelluksen
+tilan käyttöön.
+
+Käyttäjä voi kirjautua palveluun -> Firebase tarkistaa sähköpostiosoitteen ja salasanan olevan oikeat -> palauttaa käyttäjän
+tiedot (kuten idtokenin ja refreshtokenin) -> näiden tietojen avulla palvelimelta voidaan hakea tietoja laittamalla pyyntöön
+header -kohtaan idtokenin.
+
+| ![kuva10.jpg](https://github.com/niikari/ohjelmistotekniikoiden-seminaari/blob/main/photos/end_part1.JPG?raw=true) |
+|:--:|
+| *Käyttäjän rekisteröiminen (ei käyttäjää vielä Firebase projektissa)* |
+
+| ![kuva11.jpg](https://github.com/niikari/ohjelmistotekniikoiden-seminaari/blob/main/photos/end_part2.JPG?raw=true) |
+|:--:|
+| *Rekisteröinti tehty, käyttäjä lisätty Firebase projektiin ja kirjauduttu sisään sovellukseen* |
+
+| ![kuva12.jpg](https://github.com/niikari/ohjelmistotekniikoiden-seminaari/blob/main/photos/end_part3.JPG?raw=true) |
+|:--:|
+| *Käyttäjän tiedot lisätty palvelimelle ja sovelluksella käytössä tokenit sekä sähköpostiosoite* |
+
 
 
 
