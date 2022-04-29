@@ -173,7 +173,9 @@ API avaimen ja osoitteen. Lisäksi laitoin yhdeksi muuttujaksi REACT_APP_BACKEND
 oli Openshiftissä pyörivän palvelimen osoite.
 
 Käyttöliittymästä oli tarkoitus tehdä mahdollisimman yksinkertainen (ajan säästämisen vuoksi). Ainoat mitkä olivat tärkeitä, olivat
-kirjautumissivu sekä rekisteröintisivu. Lopulta tein Dockerfilen ja loin tästä paikallisen imagen:
+kirjautumissivu sekä rekisteröintisivu. Sovelluksen lopullinen koodi löytyy [täältä](https://github.com/niikari/tori_frontend). 
+
+Lopulta tein Dockerfilen ja loin tästä paikallisen imagen:
 
 ```
 FROM node:17-alpine
@@ -235,7 +237,20 @@ path: '/app/public/env.js'
 Ongelmana oli kontin sisäiset käyttäjäoikeudet. Kansio, joka konttiin luotiin (/app) on luoutu root -käyttäjänä. Kontin suoritusta
 ei tehdä root -käyttäjänä.
 
+Yritin ratkoa tätä ongelmaa, mutta en siinä lopulta onnistunut. Päätin lisätä käyttöliittymän Openshiftiin sen tarjoaman Github
+"builderin" avulla. Tämän jälkeen laitoin kontin käynnistyksen yhteydessä tarvittavat ympäristömuuttujat paikoilleen (.env -tiedoston
+sisältö). REACT_APP_BACKEND_URL yritin ensin laittaa vain kontin nimen (koska on Openshiftissä samassa verkossa): 'backend:8080', mutta
+tämä ei toiminut -> käyttöliittymä ei löytänyt palvelinta. Päädyin lopulta laittamaan oikean fyysisen url-osoitteen - toimi.
 
+| ![kuva9.jpg](https://github.com/niikari/ohjelmistotekniikoiden-seminaari/blob/main/photos/openshift_frontend_env.JPG?raw=true) |
+|:--:|
+| *Ympäristömuuttujien asettaminen ja tallennus* |
+
+## Lopputulos
+
+
+
+ 
 
 
 
