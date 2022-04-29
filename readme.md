@@ -195,6 +195,65 @@ CMD ["npm", "start"]
 |:--:|
 | *Kontissa pyörivä React sovellus ja testattu selaimella* |
 
+## React sovelluksen vieminen Openshiftiin
+
+Seuraavaksi tein samoin kuin palvelimen imagen kanssa - linkitin imagen nimeen haluamani paikan osoitteen Openshiftin palvelimella:
+
+	$ docker tag frontend default-route-openshift-image-registry.apps.hhocp.otaverkko.fi/niilesseminaari/frontend:latest
+
+	// Tämän jälkeen puskin imagen 
+
+	$ docker push default-route-openshift-image-registry.apps.hhocp.otaverkko.fi/niilesseminaari/frontend
+
+Kun lautaus oli valmis siirryin takaisin Openshiftiin. Suoritin jälleen saman vaiheen kuin palvelimen latauksen yhteydessä (Container
+image). Nimesin kontin 'appfrontend', kerroin portiksi 3000 -> create.
+
+| ![kuva8.jpg](https://github.com/niikari/ohjelmistotekniikoiden-seminaari/blob/main/photos/openshift_frontend_v1.JPG?raw=true) |
+|:--:|
+| *Kontti liitetty mukaan verkkoon, error viesti näkyvissä* |
+
+Tarkastin virhelokin ja sieltä löytyi seuraava virhe:
+
+```
+Error: EACCES: permission denied, open '/app/public/env.js'
+at Object.openSync (node:fs:586:3)
+at Object.writeFileSync (node:fs:2171:35)
+at Object.<anonymous> (/app/node_modules/react-dotenv/src/cli.js:37:4)
+at Module._compile (node:internal/modules/cjs/loader:1099:14)
+at Object.Module._extensions..js (node:internal/modules/cjs/loader:1153:10)
+at Module.load (node:internal/modules/cjs/loader:975:32)
+at Function.Module._load (node:internal/modules/cjs/loader:822:12)
+at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:77:12)
+at node:internal/main/run_main_module:17:47 {
+errno: -13,
+syscall: 'open',
+code: 'EACCES',
+path: '/app/public/env.js'
+}
+```
+
+Ongelmana oli kontin sisäiset käyttäjäoikeudet. Kansio, joka konttiin luotiin (/app) on luoutu root -käyttäjänä. Kontin suoritusta
+ei tehdä root -käyttäjänä.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
